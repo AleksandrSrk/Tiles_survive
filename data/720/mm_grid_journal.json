@@ -1,0 +1,223 @@
+{
+ "lx": 173,
+ "ly": 101,
+ "cells": [
+  {
+   "i": 0,
+   "dx": 20,
+   "dy": 8,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x020_y+008.png",
+   "own": true
+  },
+  {
+   "i": 1,
+   "dx": 20,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x020_y-004.png",
+   "own": true
+  },
+  {
+   "i": 2,
+   "dx": 38,
+   "dy": -16,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x038_y-016.png",
+   "own": true
+  },
+  {
+   "i": 3,
+   "dx": 38,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x038_y-004.png",
+   "own": true
+  },
+  {
+   "i": 4,
+   "dx": 38,
+   "dy": 8,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x038_y+008.png",
+   "own": true
+  },
+  {
+   "i": 5,
+   "dx": 38,
+   "dy": 20,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x038_y+020.png",
+   "own": true
+  },
+  {
+   "i": 6,
+   "dx": 56,
+   "dy": 32,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x056_y+032.png",
+   "own": true
+  },
+  {
+   "i": 7,
+   "dx": 56,
+   "dy": 20,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x056_y+020.png",
+   "own": true
+  },
+  {
+   "i": 8,
+   "dx": 56,
+   "dy": 8,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x056_y+008.png",
+   "own": true
+  },
+  {
+   "i": 9,
+   "dx": 56,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x056_y-004.png",
+   "own": true
+  },
+  {
+   "i": 10,
+   "dx": 56,
+   "dy": -16,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x056_y-016.png",
+   "own": true
+  },
+  {
+   "i": 11,
+   "dx": 56,
+   "dy": -28,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x056_y-028.png",
+   "own": true
+  },
+  {
+   "i": 12,
+   "dx": 74,
+   "dy": -40,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y-040.png",
+   "own": true
+  },
+  {
+   "i": 13,
+   "dx": 74,
+   "dy": -28,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y-028.png",
+   "own": true
+  },
+  {
+   "i": 14,
+   "dx": 74,
+   "dy": -16,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y-016.png",
+   "own": true
+  },
+  {
+   "i": 15,
+   "dx": 74,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y-004.png",
+   "own": true
+  },
+  {
+   "i": 16,
+   "dx": 74,
+   "dy": 8,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y+008.png",
+   "own": true
+  },
+  {
+   "i": 17,
+   "dx": 74,
+   "dy": 20,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y+020.png",
+   "own": true
+  },
+  {
+   "i": 18,
+   "dx": 74,
+   "dy": 32,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y+032.png",
+   "own": true
+  },
+  {
+   "i": 19,
+   "dx": 74,
+   "dy": 44,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x074_y+044.png",
+   "own": true
+  },
+  {
+   "i": 20,
+   "dx": 92,
+   "dy": 32,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x092_y+032.png",
+   "own": true
+  },
+  {
+   "i": 21,
+   "dx": 92,
+   "dy": 20,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x092_y+020.png",
+   "own": true
+  },
+  {
+   "i": 22,
+   "dx": 92,
+   "dy": 8,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x092_y+008.png",
+   "own": true
+  },
+  {
+   "i": 23,
+   "dx": 92,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x092_y-004.png",
+   "own": true
+  },
+  {
+   "i": 24,
+   "dx": 92,
+   "dy": -16,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x092_y-016.png",
+   "own": true
+  },
+  {
+   "i": 25,
+   "dx": 92,
+   "dy": -28,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x092_y-028.png",
+   "own": true
+  },
+  {
+   "i": 26,
+   "dx": 110,
+   "dy": -16,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x110_y-016.png",
+   "own": true
+  },
+  {
+   "i": 27,
+   "dx": 110,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x110_y-004.png",
+   "own": true
+  },
+  {
+   "i": 28,
+   "dx": 110,
+   "dy": 8,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x110_y+008.png",
+   "own": true
+  },
+  {
+   "i": 29,
+   "dx": 110,
+   "dy": 20,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x110_y+020.png",
+   "own": true
+  },
+  {
+   "i": 30,
+   "dx": 128,
+   "dy": -4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\mm_grid\\g_x128_y-004.png",
+   "own": true
+  }
+ ]
+}

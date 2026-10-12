@@ -1,0 +1,48 @@
+import json, numpy as np, sqlite3
+from shapely.geometry import Polygon, box
+d = json.load(open('/mnt/user-data/outputs/map_type1_v2.json')); cells = d['cells']
+RN = {7: 'Аркадия', 6: 'Военная база', 5: 'Центр исследований', 4: 'Мегаполис', 3: 'Городок', 2: 'Завод', 1: 'Деревня'}
+order = sorted(cells, key=lambda c: (-c['ring'], c['id']))
+num = {c['id']: i for i, c in enumerate(order, 1)}
+gx2X = lambda gx: 34.6 + 1.2240 * gx
+gy2Y = lambda gy: 1255.8 - 1.2245 * gy
+# template plates as rectangles in game cells (continuous)
+rect = {}
+for c in cells:
+    P = np.array(c['polygon']); X = [gx2X(P[:, 0].min()), gx2X(P[:, 0].max())]; Y = sorted([gy2Y(P[:, 1].min()), gy2Y(P[:, 1].max())])
+    rect[c['id']] = (X[0], Y[0], X[1], Y[1])
+land = Polygon(np.array(json.load(open('land_contour_game_fine.json'))['pts'])).buffer(0)
+VER = {1: (540, 540, 760, 760), 31: (880, 140, 1160, 220), 39: (380, 1080, 640, 1160)}   # xmin,ymin,xmax,ymax (кл., правая граница не включена)
+N = 63
+blk = np.zeros((N, N), int); isl = np.zeros((N, N), int)
+for bx in range(N):
+    for by in range(N):
+        x0, y0 = 20 + 20 * bx, 20 + 20 * by; b = box(x0, y0, x0 + 20, y0 + 20)
+        isl[bx, by] = int(land.intersection(b).area >= 200)
+        cx, cy = x0 + 10, y0 + 10
+        best, bd = 0, 1e9
+        for pid, (a, b2, c2, d2) in rect.items():
+            dx = max(a - cx, 0, cx - c2); dy = max(b2 - cy, 0, cy - d2); dist = (dx * dx + dy * dy) ** .5
+            if dist < bd: bd, best = dist, num[pid]
+        if bd <= 14: blk[bx, by] = best
+blk[isl == 0] = 0
+for n, (x0, y0, x1, y1) in VER.items():
+    for bx in range((x0 - 20) // 20, (x1 - 20) // 20):
+        for by in range((y0 - 20) // 20, (y1 - 20) // 20):
+            blk[bx, by] = n
+byid = {num[c['id']]: c for c in cells}
+rows = []
+for n in sorted(byid):
+    c = byid[n]; m = np.argwhere(blk == n)
+    if len(m) == 0: rows.append(dict(num=n, id=c['id'], ring=c['ring'], blocks=0)); continue
+    bx0, by0 = m.min(0); bx1, by1 = m.max(0)
+    rows.append(dict(num=n, id=c['id'], ring=c['ring'], ring_name=RN[c['ring']], status='измерено' if n in VER else 'по шаблону',
+                     blocks=int(len(m)), bbox_cells=[20 + 20 * int(bx0), 20 + 20 * int(by0), 39 + 20 * int(bx1), 39 + 20 * int(by1)]))
+json.dump({'meta': {'state': 720, 'cell_range': [20, 1279], 'block_size': 20, 'grid': [N, N],
+                    'axes': 'X растёт вправо-вверх на экране, Y влево-вверх; блок (bx,by): X=20+20*bx..39+20*bx, Y=20+20*by..39+20*by',
+                    'screen_cell_px_at_work_zoom': [51, 36.2], 'ring_names': RN},
+           'plates': rows, 'blocks_plate': blk.tolist(), 'blocks_land': isl.tolist()},
+          open('map_schema_720.json', 'w'), ensure_ascii=False)
+print('land blocks', int(isl.sum()), 'assigned', int((blk > 0).sum()), 'land unassigned', int(((isl == 1) & (blk == 0)).sum()), 'assigned not land', int(((isl == 0) & (blk > 0)).sum()))
+print([r for r in rows if r['num'] in (1, 31, 39, 50, 34)])
+print('plates with 0 blocks', [r['num'] for r in rows if r['blocks'] == 0])

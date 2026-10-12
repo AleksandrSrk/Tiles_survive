@@ -1,0 +1,75 @@
+{
+ "state": "720",
+ "step": 620.0,
+ "theta_deg": 35.2,
+ "k": 1.62,
+ "warns": 2,
+ "cells": [
+  {
+   "a": 0,
+   "b": -1,
+   "pos": [
+    -495.4,
+    -359.6
+   ],
+   "inside": false,
+   "plate_diff": 42.5,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\crawl\\t_b-01_a+00.png"
+  },
+  {
+   "a": -1,
+   "b": 0,
+   "pos": [
+    -506.0,
+    344.6
+   ],
+   "inside": false,
+   "plate_diff": 27.4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\crawl\\t_b+00_a-01.png"
+  },
+  {
+   "a": 0,
+   "b": 0,
+   "pos": [
+    0.0,
+    0.0
+   ],
+   "inside": true,
+   "plate_diff": 0.0,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\crawl\\t_b+00_a+00.png"
+  },
+  {
+   "a": 1,
+   "b": 0,
+   "pos": [
+    506.6,
+    -357.4
+   ],
+   "inside": true,
+   "plate_diff": 4.2,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\crawl\\t_b+00_a+01.png"
+  },
+  {
+   "a": 2,
+   "b": 0,
+   "pos": [
+    1012.9,
+    -706.4
+   ],
+   "inside": true,
+   "plate_diff": 3.2,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\crawl\\t_b+00_a+02.png"
+  },
+  {
+   "a": 3,
+   "b": 0,
+   "pos": [
+    1537.7,
+    -1068.5
+   ],
+   "inside": true,
+   "plate_diff": 2.4,
+   "file": "D:\\PROJECT\\TilesSurviveMap\\data\\720\\screens\\crawl\\t_b+00_a+03.png"
+  }
+ ]
+}

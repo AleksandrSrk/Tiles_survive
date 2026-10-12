@@ -1,0 +1,960 @@
+{
+ "state": 720,
+ "layer": "A",
+ "map_type": 1,
+ "scanned_at": "2026-10-11T16:11:44",
+ "cells": [
+  {
+   "id": "R1-01",
+   "ring": 1,
+   "tag": "Log",
+   "rgb": [
+    170,
+    179,
+    70
+   ],
+   "votes": 1,
+   "conf": 0.5,
+   "src": "mosaic",
+   "badge_xy": [
+    2751,
+    517
+   ]
+  },
+  {
+   "id": "R1-02",
+   "ring": 1,
+   "tag": "ZOV",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 7,
+   "conf": 0.88,
+   "src": "frames",
+   "badge_xy": [
+    3152,
+    818
+   ]
+  },
+  {
+   "id": "R1-03",
+   "ring": 1,
+   "tag": "ZOV",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3604,
+    1127
+   ]
+  },
+  {
+   "id": "R1-04",
+   "ring": 1,
+   "tag": "ZOV",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    4080,
+    1473
+   ]
+  },
+  {
+   "id": "R1-05",
+   "ring": 1,
+   "tag": "EKT",
+   "rgb": [
+    220,
+    126,
+    80
+   ],
+   "votes": 5,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    4378,
+    1841
+   ]
+  },
+  {
+   "id": "R1-06",
+   "ring": 1,
+   "tag": "ULT",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 6,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3875,
+    2235
+   ]
+  },
+  {
+   "id": "R1-07",
+   "ring": 1,
+   "tag": "ULT",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3386,
+    2574
+   ]
+  },
+  {
+   "id": "R1-08",
+   "ring": 1,
+   "tag": "ULT",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2968,
+    2889
+   ]
+  },
+  {
+   "id": "R1-09",
+   "ring": 1,
+   "tag": "ULT",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 2,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2231,
+    3052
+   ]
+  },
+  {
+   "id": "R1-10",
+   "ring": 1,
+   "tag": "Zar",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1769,
+    2784
+   ]
+  },
+  {
+   "id": "R1-11",
+   "ring": 1,
+   "tag": "Zar",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1282,
+    2446
+   ]
+  },
+  {
+   "id": "R1-12",
+   "ring": 1,
+   "tag": "Zar",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 7,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    759,
+    2073
+   ]
+  },
+  {
+   "id": "R1-13",
+   "ring": 1,
+   "tag": "ONE",
+   "rgb": [
+    29,
+    99,
+    194
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    664,
+    1580
+   ]
+  },
+  {
+   "id": "R1-14",
+   "ring": 1,
+   "tag": "REZ",
+   "rgb": [
+    134,
+    195,
+    177
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1204,
+    1204
+   ]
+  },
+  {
+   "id": "R1-15",
+   "ring": 1,
+   "tag": "REZ",
+   "rgb": [
+    134,
+    195,
+    177
+   ],
+   "votes": 6,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1587,
+    914
+   ]
+  },
+  {
+   "id": "R1-16",
+   "ring": 1,
+   "tag": "REZ",
+   "rgb": [
+    134,
+    195,
+    177
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2077,
+    570
+   ]
+  },
+  {
+   "id": "R2-01",
+   "ring": 2,
+   "tag": "BDS",
+   "rgb": [
+    195,
+    134,
+    194
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2838,
+    787
+   ]
+  },
+  {
+   "id": "R2-02",
+   "ring": 2,
+   "tag": "BDS",
+   "rgb": [
+    195,
+    134,
+    194
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3350,
+    1152
+   ]
+  },
+  {
+   "id": "R2-03",
+   "ring": 2,
+   "tag": "ZOV",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3864,
+    1525
+   ]
+  },
+  {
+   "id": "R2-04",
+   "ring": 2,
+   "tag": "EKT",
+   "rgb": [
+    220,
+    126,
+    80
+   ],
+   "votes": 7,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    4004,
+    1891
+   ]
+  },
+  {
+   "id": "R2-05",
+   "ring": 2,
+   "tag": "ULT",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3482,
+    2260
+   ]
+  },
+  {
+   "id": "R2-06",
+   "ring": 2,
+   "tag": "ULT",
+   "rgb": [
+    172,
+    102,
+    208
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2978,
+    2601
+   ]
+  },
+  {
+   "id": "R2-07",
+   "ring": 2,
+   "tag": "DEU",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2560,
+    2916
+   ]
+  },
+  {
+   "id": "R2-08",
+   "ring": 2,
+   "tag": "DEU",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2070,
+    2732
+   ]
+  },
+  {
+   "id": "R2-09",
+   "ring": 2,
+   "tag": "DEU",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 7,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1547,
+    2366
+   ]
+  },
+  {
+   "id": "R2-10",
+   "ring": 2,
+   "tag": "ONE",
+   "rgb": [
+    29,
+    99,
+    194
+   ],
+   "votes": 6,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1112,
+    2050
+   ]
+  },
+  {
+   "id": "R2-11",
+   "ring": 2,
+   "tag": "ONE",
+   "rgb": [
+    29,
+    99,
+    194
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    818,
+    1685
+   ]
+  },
+  {
+   "id": "R2-12",
+   "ring": 2,
+   "tag": "FNX",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1342,
+    1309
+   ]
+  },
+  {
+   "id": "R2-13",
+   "ring": 2,
+   "tag": "REZ",
+   "rgb": [
+    134,
+    195,
+    177
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1830,
+    971
+   ]
+  },
+  {
+   "id": "R2-14",
+   "ring": 2,
+   "tag": "BDS",
+   "rgb": [
+    195,
+    134,
+    194
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2268,
+    650
+   ]
+  },
+  {
+   "id": "R3-01",
+   "ring": 3,
+   "tag": "BDS",
+   "rgb": [
+    195,
+    134,
+    194
+   ],
+   "votes": 6,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2629,
+    922
+   ]
+  },
+  {
+   "id": "R3-02",
+   "ring": 3,
+   "tag": "SUN",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3196,
+    1311
+   ]
+  },
+  {
+   "id": "R3-03",
+   "ring": 3,
+   "tag": "SUN",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3812,
+    1761
+   ]
+  },
+  {
+   "id": "R3-04",
+   "ring": 3,
+   "tag": "DEU",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3217,
+    2235
+   ]
+  },
+  {
+   "id": "R3-05",
+   "ring": 3,
+   "tag": "DEU",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 11,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2628,
+    2653
+   ]
+  },
+  {
+   "id": "R3-06",
+   "ring": 3,
+   "tag": "ONE",
+   "rgb": [
+    29,
+    99,
+    194
+   ],
+   "votes": 8,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2138,
+    2579
+   ]
+  },
+  {
+   "id": "R3-07",
+   "ring": 3,
+   "tag": "ONE",
+   "rgb": [
+    29,
+    99,
+    194
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1629,
+    2213
+   ]
+  },
+  {
+   "id": "R3-08",
+   "ring": 3,
+   "tag": "FNX",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 5,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1073,
+    1818
+   ]
+  },
+  {
+   "id": "R3-09",
+   "ring": 3,
+   "tag": "FNX",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1433,
+    1499
+   ]
+  },
+  {
+   "id": "R3-10",
+   "ring": 3,
+   "tag": "REZ",
+   "rgb": [
+    134,
+    195,
+    177
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2082,
+    1051
+   ]
+  },
+  {
+   "id": "R4-01",
+   "ring": 4,
+   "tag": "SUN",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 10,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2816,
+    1258
+   ]
+  },
+  {
+   "id": "R4-02",
+   "ring": 4,
+   "tag": "SUN",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 11,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3374,
+    1659
+   ]
+  },
+  {
+   "id": "R4-03",
+   "ring": 4,
+   "tag": "DEU",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 9,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    3183,
+    2049
+   ]
+  },
+  {
+   "id": "R4-04",
+   "ring": 4,
+   "tag": "HoD",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 11,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2628,
+    2443
+   ]
+  },
+  {
+   "id": "R4-05",
+   "ring": 4,
+   "tag": "HoD",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2109,
+    2339
+   ]
+  },
+  {
+   "id": "R4-06",
+   "ring": 4,
+   "tag": "ONE",
+   "rgb": [
+    29,
+    99,
+    194
+   ],
+   "votes": 5,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1508,
+    1919
+   ]
+  },
+  {
+   "id": "R4-07",
+   "ring": 4,
+   "tag": "FNX",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 11,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1648,
+    1550
+   ]
+  },
+  {
+   "id": "R4-08",
+   "ring": 4,
+   "tag": "BDS",
+   "rgb": [
+    195,
+    134,
+    194
+   ],
+   "votes": 6,
+   "conf": 0.86,
+   "src": "frames",
+   "badge_xy": [
+    2223,
+    1154
+   ]
+  },
+  {
+   "id": "R5-01",
+   "ring": 5,
+   "tag": "SUN",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2416,
+    1206
+   ]
+  },
+  {
+   "id": "R5-02",
+   "ring": 5,
+   "tag": "HoD",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 11,
+   "conf": 0.92,
+   "src": "frames",
+   "badge_xy": [
+    3084,
+    1685
+   ]
+  },
+  {
+   "id": "R5-03",
+   "ring": 5,
+   "tag": "HoD",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 11,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2713,
+    2157
+   ]
+  },
+  {
+   "id": "R5-04",
+   "ring": 5,
+   "tag": "HoD",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2044,
+    2105
+   ]
+  },
+  {
+   "id": "R5-05",
+   "ring": 5,
+   "tag": "FNX",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 7,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    1696,
+    1707
+   ]
+  },
+  {
+   "id": "R6-01",
+   "ring": 6,
+   "tag": "SUN",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 10,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2843,
+    1711
+   ]
+  },
+  {
+   "id": "R6-02",
+   "ring": 6,
+   "tag": "HoD",
+   "rgb": [
+    134,
+    179,
+    194
+   ],
+   "votes": 12,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2289,
+    2050
+   ]
+  },
+  {
+   "id": "R6-03",
+   "ring": 6,
+   "tag": "FNX",
+   "rgb": [
+    224,
+    165,
+    68
+   ],
+   "votes": 11,
+   "conf": 1.0,
+   "src": "frames",
+   "badge_xy": [
+    2250,
+    1550
+   ]
+  }
+ ]
+}

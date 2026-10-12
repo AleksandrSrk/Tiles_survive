@@ -1,0 +1,33 @@
+# окружение и мусор
+.venv/
+__pycache__/
+*.pyc
+*.log
+
+# служебные файлы админ-раннера (перезаписываются каждым запуском)
+admin_result.txt
+hud_test_result.txt
+data/720/proc_out.txt
+data/720/rs_out.txt
+data/720/owners_now.txt
+
+# сырые скриншоты игры и кадры сканов (сотни МБ, воспроизводимы обходом)
+samples/
+data/**/screens/
+data/**/scans/
+data/**/pilot/
+
+# картинки: только избранные результаты
+data/**/*.png
+!data/720/map_720_schema.png
+!data/720/schema_v12_720.png
+
+# референсные картинки чужой карты сообщества (не наши, не публикуем)
+assets/reference/*.png
+
+# бэкапы, временное, неудачные попытки
+*.bak
+*.bak_*
+assets/reference/old_v1/_failed/
+data/720/tmp_*
+src/offline/tmp_*

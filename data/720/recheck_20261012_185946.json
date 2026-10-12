@@ -1,0 +1,74 @@
+[
+ {
+  "cell": "R5-02",
+  "dx": 91,
+  "dy": -3,
+  "why": "tag=HoD conf=0.6 votes=3"
+ },
+ {
+  "cell": "R4-05",
+  "dx": 59,
+  "dy": 19,
+  "why": "tag=HoD conf=0.6 votes=3"
+ },
+ {
+  "cell": "R4-07",
+  "dx": 45,
+  "dy": -7,
+  "why": "не найден"
+ },
+ {
+  "cell": "R3-06",
+  "dx": 61,
+  "dy": 26,
+  "why": "tag=ONE conf=0.6 votes=3"
+ },
+ {
+  "cell": "R2-04",
+  "dx": 120,
+  "dy": 5,
+  "why": "tag=EKT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R2-05",
+  "dx": 104,
+  "dy": 16,
+  "why": "tag=ULT conf=0.5 votes=2"
+ },
+ {
+  "cell": "R1-03",
+  "dx": 108,
+  "dy": -19,
+  "why": "tag=ZOV conf=0.5 votes=1"
+ },
+ {
+  "cell": "R1-06",
+  "dx": 117,
+  "dy": 15,
+  "why": "tag=ULT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-08",
+  "dx": 85,
+  "dy": 37,
+  "why": "tag=ULT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-09",
+  "dx": 62,
+  "dy": 42,
+  "why": "tag=ULT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-12",
+  "dx": 17,
+  "dy": 10,
+  "why": "tag=Zar conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-16",
+  "dx": 59,
+  "dy": -37,
+  "why": "tag=REZ conf=0.67 votes=2"
+ }
+]

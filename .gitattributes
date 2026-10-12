@@ -1,0 +1,6 @@
+# золотая схема: sha256 считается по байтам, переводы строк трогать нельзя
+assets/reference/map_schema_720.json -text
+assets/reference/map_schema_720.sha256 -text
+assets/reference/old_v1/map_schema_720.json -text
+*.sqlite binary
+*.png binary

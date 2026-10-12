@@ -1,0 +1,276 @@
+"""Безопасный ввод в игру + навигация.
+- Перед каждым действием окно игры жёстко поднимается на передний план;
+  не удалось -> FocusLost, ввод НЕ отправляется.
+- АВАРИЙНЫЙ СТОП: включи ScrollLock (лампочка на клавиатуре) -> бот немедленно
+  останавливается, отпускает кнопку мыши и перестаёт перехватывать фокус.
+  Выключи ScrollLock -> снова можно запускать."""
+import time, ctypes
+import numpy as np
+import cv2
+import window_manager as wm
+
+u = ctypes.windll.user32
+k32 = ctypes.windll.kernel32
+LEFTDOWN, LEFTUP, WHEEL = 0x0002, 0x0004, 0x0800
+VK_ESCAPE, VK_MENU, VK_SCROLL, KEYUP = 0x1B, 0x12, 0x91, 0x0002
+BLUE_LO, BLUE_HI = (90, 120, 170), (120, 255, 255)
+MM_FROM_RIGHT, MM_FROM_TOP = 170, 100   # левый угол ромба миникарты: 170 от прав.края, 100 от верха окна
+# (замер пользователя: абс.экран (-170,120) при окне на эталоне (-1774,20) => окно-отн. (1604,100))
+_TMP_STATE = r"D:\PROJECT\TilesSurviveMap\data\720\screens\_tmp_state.png"
+
+
+class FocusLost(Exception):
+    pass
+
+
+class Aborted(Exception):
+    pass
+
+
+def abort_requested():
+    """ScrollLock включён -> пользователь просит стоп."""
+    return bool(u.GetKeyState(VK_SCROLL) & 1)
+
+
+def _force_fg(hwnd):
+    if u.GetForegroundWindow() == hwnd:
+        return True
+    cur = k32.GetCurrentThreadId()
+    fg_t = u.GetWindowThreadProcessId(u.GetForegroundWindow(), None)
+    tg_t = u.GetWindowThreadProcessId(hwnd, None)
+    for t in {fg_t, tg_t}:
+        u.AttachThreadInput(cur, t, True)
+    try:
+        u.keybd_event(VK_MENU, 0, 0, 0); u.keybd_event(VK_MENU, 0, KEYUP, 0)
+        u.BringWindowToTop(hwnd)
+        u.ShowWindow(hwnd, 5)
+        u.SetForegroundWindow(hwnd)
+    finally:
+        for t in {fg_t, tg_t}:
+            u.AttachThreadInput(cur, t, False)
+    return u.GetForegroundWindow() == hwnd
+
+
+def ensure_focus(retries=4, settle=0.3):
+    if abort_requested():
+        raise Aborted("Остановлено пользователем (ScrollLock)")
+    for _ in range(retries):
+        w = wm.get_window()
+        if w is None:
+            time.sleep(settle); continue
+        if u.GetForegroundWindow() == w._hWnd:
+            return w
+        try:
+            _force_fg(w._hWnd)
+        except Exception:
+            pass
+        time.sleep(settle)
+        if u.GetForegroundWindow() == w._hWnd:
+            return w
+    raise FocusLost("Не удалось поднять окно игры на передний план — ввод прерван")
+
+
+def _inside(w, x, y):
+    return w.left <= x < w.left + w.width and w.top <= y < w.top + w.height
+
+
+def _guard(w):
+    """Проверка перед каждым суб-действием: стоп по ScrollLock или потеря фокуса."""
+    if abort_requested():
+        raise Aborted("Остановлено пользователем (ScrollLock)")
+    if u.GetForegroundWindow() != w._hWnd:
+        raise FocusLost("Фокус потерян во время ввода — прервано")
+
+
+def safe_drag(x0, y0, x1, y1, steps=25, hold=0.15):
+    w = ensure_focus()
+    if not (_inside(w, x0, y0) and _inside(w, x1, y1)):
+        raise ValueError("drag вне окна игры")
+    u.SetCursorPos(int(x0), int(y0)); time.sleep(0.2)
+    u.mouse_event(LEFTDOWN, 0, 0, 0, 0); time.sleep(hold)
+    try:
+        for i in range(1, steps + 1):
+            _guard(w)
+            u.SetCursorPos(int(x0 + (x1 - x0) * i / steps), int(y0 + (y1 - y0) * i / steps))
+            time.sleep(0.012)
+    finally:
+        u.mouse_event(LEFTUP, 0, 0, 0, 0)   # кнопку отпускаем всегда
+    time.sleep(hold)
+
+
+def safe_click(x, y):
+    w = ensure_focus()
+    if not _inside(w, x, y):
+        raise ValueError("click вне окна игры")
+    u.SetCursorPos(int(x), int(y)); time.sleep(0.2)
+    u.mouse_event(LEFTDOWN, 0, 0, 0, 0); time.sleep(0.06)
+    u.mouse_event(LEFTUP, 0, 0, 0, 0)
+
+
+def safe_wheel(cx, cy, clicks, delta=-120, pause=0.07):
+    w = ensure_focus()
+    if not _inside(w, cx, cy):
+        raise ValueError("wheel вне окна игры")
+    u.SetCursorPos(int(cx), int(cy)); time.sleep(0.2)
+    for _ in range(clicks):
+        _guard(w)
+        u.mouse_event(WHEEL, 0, 0, delta, 0); time.sleep(pause)
+
+
+def safe_key(vk, presses=1, pause=0.2):
+    w = ensure_focus()
+    for _ in range(presses):
+        _guard(w)
+        u.keybd_event(vk, 0, 0, 0); time.sleep(0.04)
+        u.keybd_event(vk, 0, KEYUP, 0); time.sleep(pause)
+
+
+# --- helpers ---
+
+def clear_popups(presses=3):
+    safe_key(VK_ESCAPE, presses=presses, pause=0.3)
+
+
+def go_home(settle=2.2):
+    w = ensure_focus()
+    safe_click(w.left + 1665, w.top + 193)
+    time.sleep(settle)
+
+
+def zoom_max(max_batches=14, batch=6, settle=1.2,
+             tmp=r"D:\PROJECT\TilesSurviveMap\data\720\screens\_tmp_zoom.png"):
+    """Отдалить до УПОРА: крутим зум-аут партиями, пока кадр не перестанет
+    меняться (реальный максимум). Работает из любого стартового зума."""
+    w = ensure_focus()
+    cx, cy = w.left + w.width // 2, w.top + w.height // 2
+    prev = None
+    for _ in range(max_batches):
+        safe_wheel(cx, cy, batch, delta=-120)
+        time.sleep(settle)
+        img, _ = wm.capture_window(tmp, settle=0.3)
+        g = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY).astype(np.float32)[150:878, 300:1474]
+        if prev is not None:
+            win = cv2.createHanningWindow((g.shape[1], g.shape[0]), cv2.CV_32F)
+            (dx, dy), _ = cv2.phaseCorrelate(prev, g, win)
+            if (dx * dx + dy * dy) ** 0.5 < 3:
+                return True          # упор достигнут
+        prev = g
+    return False
+
+
+def find_return_button(img_rgb_np):
+    """Кнопка 'Предпросмотр штата' (мы в ЧУЖОМ штате) — по ОПАКОВОЙ круглой
+    иконке поселения: синее кольцо + НЕ-синий центр. Возврат (x,y центра
+    иконки отн. кадра) или None. Кликаем по самой иконке."""
+    bgr = cv2.cvtColor(img_rgb_np, cv2.COLOR_RGB2BGR)
+    h, w = bgr.shape[:2]
+    x0, x1, y0, y1 = int(w * 0.25), int(w * 0.75), int(h * 0.35), int(h * 0.85)
+    hsv = cv2.cvtColor(bgr[y0:y1, x0:x1], cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, BLUE_LO, BLUE_HI)
+    mb = cv2.GaussianBlur(mask, (5, 5), 0)
+    cs = cv2.HoughCircles(mb, cv2.HOUGH_GRADIENT, 1, 60, param1=100, param2=18,
+                          minRadius=26, maxRadius=44)
+    if cs is None:
+        return None
+    bm = (mask > 0).astype(np.uint8)
+    yy, xx = np.ogrid[:bm.shape[0], :bm.shape[1]]
+    for c in cs[0]:
+        cx, cy, r = int(c[0]), int(c[1]), int(c[2])
+        d = np.sqrt((xx - cx) ** 2 + (yy - cy) ** 2)
+        ann = (d > r * 0.78) & (d <= r * 1.05)
+        inner = d <= r * 0.45
+        if ann.sum() and inner.sum() and bm[ann].mean() > 0.45 and bm[inner].mean() < 0.35:
+            return cx + x0, cy + y0
+    return None
+
+
+def goto_own_state(tries=6, tmp=r"D:\PROJECT\TilesSurviveMap\data\720\screens\_tmp_state.png"):
+    """Пока видна кнопка возврата (мы в чужом штате) — кликать по иконке. Макс-зум между."""
+    zoom_max()
+    for _ in range(tries):
+        w = ensure_focus()
+        img, _ = wm.capture_window(tmp, settle=0.6)
+        pt = find_return_button(np.array(img))
+        if pt is None:
+            return True
+        safe_click(w.left + pt[0], w.top + pt[1]); time.sleep(1.8)
+        zoom_max()
+    return False
+
+
+def _state_plate(img_rgb_np):
+    """Регион плашки штата (верх-лево) в сером float — для детекта смены штата."""
+    return cv2.cvtColor(img_rgb_np[50:150, 10:230], cv2.COLOR_RGB2GRAY).astype(np.float32)
+
+
+def _pan_to_boundary(ref, Vx, Vy, label, max_steps=10, dxy=400, thresh=15.0,
+                     tmp=r"D:\PROJECT\TilesSurviveMap\data\720\screens\_tmp_state.png"):
+    """Пан ВИД в направлении (Vx,Vy) (экранные оси, +y вниз) малыми шагами, пока
+    плашка штата != эталон (пересекли границу) -> шаг назад. Вид двигается в
+    (Vx,Vy) => курсор тащим в противоположную сторону."""
+    d = dxy // 2
+    for i in range(max_steps):
+        w = ensure_focus()
+        cx, cy = w.left + w.width // 2, w.top + w.height // 2
+        safe_drag(cx + Vx * d, cy + Vy * d, cx - Vx * d, cy - Vy * d)
+        time.sleep(1.4)
+        img, _ = wm.capture_window(tmp, settle=0.5)
+        diff = float(np.abs(_state_plate(np.array(img)) - ref).mean())
+        print(f"  [{label}] шаг {i}: diff={diff:.1f}", flush=True)
+        if diff > thresh:
+            w = ensure_focus()
+            cx, cy = w.left + w.width // 2, w.top + w.height // 2
+            safe_drag(cx - Vx * d, cy - Vy * d, cx + Vx * d, cy + Vy * d)   # шаг назад
+            time.sleep(1.4)
+            return i + 1
+    return -1
+
+
+def find_corner_bl(tmp=r"D:\PROJECT\TilesSurviveMap\data\720\screens\_tmp_state.png"):
+    """Нижне-левый угол: фаза1 — вид ВНИЗ до границы (откат); фаза2 — вид по
+    ДИАГОНАЛИ вверх-влево до границы (откат). Стык = нижне-левый угол."""
+    ref_img, _ = wm.capture_window(tmp, settle=0.4)
+    ref = _state_plate(np.array(ref_img))
+    s1 = _pan_to_boundary(ref, 0, 1, "вниз")
+    s2 = _pan_to_boundary(ref, -1, -1, "диаг-вверх-влево")
+    return {"вниз_шагов": s1, "диаг_шагов": s2}
+
+
+def start_position():
+    """Стартовый маршрут строго по шагам:
+    1 размер окна -> 2 позиция окна -> 3 макс-зум -> 4 проверка штата ->
+    5 наш штат: тык на ромбик -> проверка по границам;
+    6 чужой: кнопка возврата -> тык на ромбик -> проверка по границам."""
+    def log(m):
+        print(m, flush=True)
+
+    w0 = wm.get_window()
+    before = None if w0 is None else (w0.width, w0.height, w0.left, w0.top)
+    w = wm.ensure_window()                          # 1-2: размер + позиция
+    log(f"[1-2] окно было {before} -> {(w.width, w.height, w.left, w.top)}")
+    clear_popups()
+    zoom_max()                                      # 3: макс-зум
+    log("[3] макс-зум")
+
+    img, _ = wm.capture_window(_TMP_STATE, settle=0.4)
+    foreign = find_return_button(np.array(img)) is not None   # 4: проверка штата
+    log(f"[4] текущий штат: {'ЧУЖОЙ' if foreign else 'НАШ'}")
+
+    if foreign:                                     # 6: вернуться в свой штат
+        if not goto_own_state():
+            return {"ok": False, "stage": "возврат в свой штат не удался"}
+        zoom_max()
+        log("[6] вернулись в свой штат")
+
+    w = ensure_focus()                              # 5: тык на ромбик (левый угол)
+    safe_click(w.left + w.width - MM_FROM_RIGHT, w.top + MM_FROM_TOP)
+    time.sleep(2.2)
+    zoom_max()
+    log("[5] прыжок по миникарте в левый угол")
+
+    ref_img, _ = wm.capture_window(_TMP_STATE, settle=0.4)     # проверка по границам
+    ref = _state_plate(np.array(ref_img))
+    s_left = _pan_to_boundary(ref, -1, 0, "влево", max_steps=8)
+    s_up = _pan_to_boundary(ref, 0, -1, "вверх", max_steps=8)
+    log(f"[границы] влево={s_left}, вверх={s_up}")
+    return {"ok": True, "foreign_start": foreign, "влево": s_left, "вверх": s_up}

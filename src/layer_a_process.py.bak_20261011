@@ -1,0 +1,301 @@
+# -*- coding: utf-8 -*-
+"""Слой A, офлайн-обработка: кадры миникарта-краула -> владельцы плиток -> БД + картинка.
+Запуск (обычный, НЕ админ процесс, нужен easyocr):
+    python src\\layer_a_process.py [--journal data\\720\\mm_grid_journal.json] [--state 720] [--dry] [--center X,Y]
+"""
+import argparse, datetime, difflib, json, math, os, re, sqlite3, sys, time
+from collections import Counter, defaultdict
+import cv2, numpy as np
+from scipy.optimize import linear_sum_assignment
+
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE, "src"))
+KMM = 31.5
+H, W = 1028, 1774
+NAMES = {"деревня": 1, "завод": 2, "городок": 3, "мегаполис": 4, "центр исследований": 5, "военная база": 6, "аркадия": 7}
+CY = {"А": "A", "В": "B", "Е": "E", "К": "K", "М": "M", "Н": "H", "О": "O", "Р": "P", "С": "C", "Т": "T", "Х": "X", "У": "Y",
+      "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "х": "x", "у": "y", "к": "k", "т": "t", "н": "h", "в": "b", "м": "m"}
+KNOWN = set()
+TH = math.radians(35.2); CC, SS = math.cos(TH), math.sin(TH)
+
+
+def log(*a):
+    print(time.strftime("%H:%M:%S"), *a, flush=True)
+
+
+def valid_mask():
+    m = np.full((H, W), 255, np.uint8)
+    m[:50, :] = 0; m[:160, :245] = 0; m[:340, 1560:] = 0; m[950:, :] = 0; m[880:, 1620:] = 0
+    return m
+
+
+def load_frames(jpath):
+    J = json.load(open(jpath, encoding="utf-8"))
+    d = os.path.dirname(jpath); fr = []
+    for c in J["cells"]:
+        f = c["file"]
+        if not os.path.exists(f):
+            for cand in (os.path.join(d, os.path.basename(f)), os.path.join(d, "screens", "mm_grid", os.path.basename(f))):
+                if os.path.exists(cand): f = cand; break
+        if os.path.exists(f) and c.get("own", True):
+            fr.append({"dx": c["dx"], "dy": c["dy"], "file": f})
+    return fr
+
+
+def positions(fr):
+    sift = cv2.SIFT_create(6000); bf = cv2.BFMatcher(); roi = np.zeros((H, W), np.uint8); roi[170:930, 240:1570] = 255
+    for f in fr:
+        im = cv2.imread(f["file"]); f["img"] = im
+        f["kp"], f["ds"] = sift.detectAndCompute(cv2.cvtColor(im, cv2.COLOR_BGR2GRAY), roi)
+    E = []
+    for i, a in enumerate(fr):
+        for j in range(i + 1, len(fr)):
+            b = fr[j]; dx = b["dx"] - a["dx"]; dy = b["dy"] - a["dy"]
+            if (dx, dy) == (0, 0) or abs(dx) > 18 or abs(dy) > 24: continue
+            pr = np.array([-KMM * dx, -KMM * dy])
+            ms = [m for m, n in (p for p in bf.knnMatch(a["ds"], b["ds"], k=2) if len(p) == 2) if m.distance < 0.8 * n.distance]
+            if not ms: continue
+            d = np.float32([np.array(b["kp"][m.trainIdx].pt) - np.array(a["kp"][m.queryIdx].pt) for m in ms])
+            d = d[np.linalg.norm(d - pr, axis=1) < 120]
+            best = None; bi = 0
+            for x in d:
+                inl = np.linalg.norm(d - x, axis=1) < 2.5
+                if inl.sum() > bi: bi = inl.sum(); best = d[inl].mean(0)
+            if best is not None and bi >= 12: E.append((i, j, best, bi))
+    N = len(fr); V = np.zeros((N, 2))
+    for ax in (0, 1):
+        A = []; b = []
+        for i, j, s, n in E:
+            r = np.zeros(N); r[j] = 1; r[i] = -1; A.append(r * np.sqrt(n)); b.append(-s[ax] * np.sqrt(n))
+        for i, f in enumerate(fr):
+            r = np.zeros(N); r[i] = 1; A.append(r * 0.5); b.append(KMM * (f["dx"] if ax == 0 else f["dy"]) * 0.5)
+        V[:, ax] = np.linalg.lstsq(np.array(A), np.array(b), rcond=None)[0]
+    res = [np.hypot(*(-(V[j] - V[i]) - s)) for i, j, s, n in E]
+    dev = [np.hypot(*(V[i] - KMM * np.array([f["dx"], f["dy"]]))) for i, f in enumerate(fr)]
+    log("кадров", N, "рёбер", len(E), "невязка med/max", round(float(np.median(res)), 1), round(float(max(res)), 1), "откл. от клика max", round(float(max(dev)), 1))
+    for i, f in enumerate(fr): f["V"] = V[i]
+    return fr
+
+
+def detect(im, vm):
+    hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV); h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
+    out = []
+    red = (((h <= 8) | (h >= 172)) & (s > 110) & (v > 110) & (v < 235)).astype(np.uint8) * 255
+    red = cv2.morphologyEx(red, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (9, 5)))
+    blue = ((h >= 106) & (h <= 116) & (s >= 110) & (s <= 178) & (v >= 115) & (v <= 190)).astype(np.uint8) * 255
+    blue = cv2.morphologyEx(blue, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (13, 5)))
+    for kind, m, (w0, w1, h0, h1) in (("red", red, (60, 330, 14, 45)), ("blue", blue, (80, 340, 18, 40))):
+        n, lab, st, _ = cv2.connectedComponentsWithStats(m)
+        for i in range(1, n):
+            x, y, w, hh, a = st[i]
+            if w0 <= w <= w1 and h0 <= hh <= h1 and a > w * hh * 0.35 and vm[y:y + hh, x:x + w].min() > 0 \
+                    and x > 4 and y > 4 and x + w < W - 4 and y + hh < H - 4:
+                out.append((int(x), int(y), int(w), int(hh), kind))
+    return out
+
+
+def cluster(fr, dtm):
+    cl = []
+    for fi, f in enumerate(fr):
+        for (x, y, w, h, kind) in detect(f["img"], valid_mask()):
+            g = f["V"] + np.array([x + w / 2, y + h / 2])
+            q = float(dtm[min(H - 1, y + h // 2), min(W - 1, x + w // 2)])
+            for c in cl:
+                if np.hypot(*(c["g"] - g)) < 45:
+                    c["obs"].append((fi, x, y, w, h, q)); c["g"] = np.mean([fr[o[0]]["V"] + [o[1] + o[3] / 2, o[2] + o[4] / 2] for o in c["obs"]], axis=0); break
+            else:
+                cl.append({"g": g, "kind": kind, "obs": [(fi, x, y, w, h, q)]})
+    return cl
+
+
+def fix_tag(t):
+    return "".join(CY.get(ch, ch) for ch in t)
+
+
+def parse(txt):
+    s = txt.replace("}", "]").replace("{", "[").replace("(", "[").replace(")", "]").replace("|[", "[").replace("[ ", "[").replace(" ]", "]").replace("\\[", "[")
+    m = re.search(r"\[([^\]\[]{2,6})\]", s)
+    tag = fix_tag(m.group(1).replace(" ", "")) if m else None
+    if not tag:
+        fs = fix_tag(s)
+        for kt in sorted(KNOWN, key=len, reverse=True):
+            if kt and re.search(r"(?<![A-Za-z])" + re.escape(kt) + r"(?![A-Za-z])", fs):
+                tag = kt; break
+    rest = s[m.end():] if m else s
+    rest = rest.strip().lower()
+    ring = None; best = 0
+    if rest:
+        for nm, r in NAMES.items():
+            sc = max(difflib.SequenceMatcher(None, rest, nm).ratio(), difflib.SequenceMatcher(None, rest[:len(nm)], nm).ratio())
+            if sc > best: best, ring = sc, r
+        if best < 0.55: ring = None
+    return tag, ring
+
+
+def plate_color(im, x, y, w, h):
+    cx = x + w // 2; pats = []
+    for (a, b) in ((y - 45, y - 12), (y + h + 12, y + h + 45)):
+        if a >= 0 and b <= H and cx - 40 >= 0 and cx + 40 <= W: pats.append(im[a:b, cx - 40:cx + 40])
+    if not pats: return None
+    px = np.concatenate([p.reshape(-1, 3) for p in pats]); hsv = cv2.cvtColor(px.reshape(-1, 1, 3), cv2.COLOR_BGR2HSV).reshape(-1, 3)
+    ok = px[hsv[:, 1] > 40]
+    if len(ok) < 50: ok = px
+    q = ok // 16; key = Counter(map(tuple, q)).most_common(1)[0][0]
+    return np.median(ok[np.all(q == np.array(key), axis=1)], axis=0).astype(int)[::-1].tolist()
+
+
+def ocr_clusters(cl, fr, reader):
+    for k, c in enumerate(cl):
+        obs = sorted(c["obs"], key=lambda o: -o[5])[:5]; c["tags"] = []; c["rings"] = []; c["txt"] = []; c["rgb"] = []
+        for (fi, x, y, w, h, q) in obs:
+            im = fr[fi]["img"]; crop = im[max(0, y - 3):y + h + 3, max(0, x - 4):x + w + 8]
+            crop = cv2.resize(crop, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+            t = " ".join(reader.readtext(crop, detail=0, paragraph=False))
+            tag, ring = parse(t); c["txt"].append(t)
+            if tag: c["tags"].append(tag)
+            if ring: c["rings"].append(ring)
+            col = plate_color(im, x, y, w, h)
+            if col: c["rgb"].append(col)
+        if (k + 1) % 10 == 0: log("OCR", k + 1, "/", len(cl))
+    return cl
+
+
+def known_tags(db):
+    try: return {r[0] for r in db.execute("SELECT DISTINCT tag FROM cell_owners WHERE tag IS NOT NULL")}
+    except Exception: return set()
+
+
+def tkey(t): return t.upper().replace("0", "O").replace("1", "I").replace("L", "I")
+
+
+def canon(tags, known):
+    if not tags: return None, 0, 0
+    grp = defaultdict(list)
+    for t in tags: grp[tkey(t)].append(t)
+    k, lst = max(grp.items(), key=lambda kv: len(kv[1]))
+    for kt in known:
+        if tkey(kt) == k: return kt, len(lst), len(tags)
+    # фаззи-снап к известным тегам: ошибочные чтения (ZO╚, ULi, Zat) добавляют голос за известный
+    votes = Counter()
+    for t in tags:
+        best = max(known, key=lambda kt: difflib.SequenceMatcher(None, tkey(t), tkey(kt)).ratio(), default=None)
+        if best and (tkey(best) == tkey(t) or difflib.SequenceMatcher(None, tkey(t), tkey(best)).ratio() >= 0.66): votes[best] += 1
+        else: votes[t] += 1
+    t, n = votes.most_common(1)[0]
+    if known and (n >= max(2, len(lst)) or t in known): return t, n, len(tags)
+    return Counter(lst).most_common(1)[0][0], len(lst), len(tags)
+
+
+def ground(p, cen):
+    x, y = p[0] - cen[0], p[1] - cen[1]
+    return np.array([(x / CC - y / SS) / 2, (x / CC + y / SS) / 2])
+
+
+def cdiff(a, b):
+    d = abs(a - b) % (2 * math.pi); return min(d, 2 * math.pi - d)
+
+
+def assign(items, T, cen):
+    """items: кластеры с ring. Возврат {cell_id: item}, суммарная ошибка."""
+    c7 = [c for c in T if c["ring"] == 7][0]["centroid"]; out = {}; tot = 0; n = 0
+    for r in range(1, 7):
+        S = [c for c in T if c["ring"] == r]; B = [it for it in items if it["ring"] == r]
+        if not B: continue
+        ta = [math.atan2(c["centroid"][1] - c7[1], c["centroid"][0] - c7[0]) for c in S]
+        ba = [math.atan2(*ground(b["g"], cen)[::-1]) for b in B]
+        cost = np.array([[cdiff(a, b) for b in ba] for a in ta]); ri, ci = linear_sum_assignment(cost)
+        for i, j in zip(ri, ci): out[S[i]["id"]] = B[j]; tot += cost[i, j]; n += 1
+    return out, tot / max(n, 1)
+
+
+def find_center(items, T):
+    g = np.array([it["g"] for it in items]); c0 = (g.min(0) + g.max(0)) / 2; best = None
+    for st, rng in ((40, 400), (10, 60)):
+        base = c0 if best is None else best[1]
+        for dx in np.arange(-rng, rng + 1, st):
+            for dy in np.arange(-rng, rng + 1, st):
+                cen = base + [dx, dy]; _, e = assign(items, T, cen)
+                if best is None or e < best[0]: best = (e, cen)
+    return best[1], best[0]
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--state", default="720")
+    ap.add_argument("--journal", default=None)
+    ap.add_argument("--db", default=None)
+    ap.add_argument("--dry", action="store_true", help="не писать в БД")
+    ap.add_argument("--center", default=None, help="центр карты в координатах клика 'x,y' (иначе поиск)")
+    ap.add_argument("--note", default="")
+    a = ap.parse_args()
+    dd = os.path.join(BASE, "data", a.state)
+    jp = a.journal or os.path.join(dd, "mm_grid_journal.json"); dbp = a.db or os.path.join(dd, "layer_a.sqlite")
+    tpl = os.path.join(BASE, "assets", "reference", "map_type1_v2.json"); T = json.load(open(tpl, encoding="utf-8"))["cells"]
+    fr = load_frames(jp); log("кадры:", len(fr))
+    fr = positions(fr)
+    dtm = cv2.distanceTransform(valid_mask(), cv2.DIST_L2, 3)
+    cl = cluster(fr, dtm); log("кластеров бейджей:", len(cl))
+    import easyocr
+    reader = easyocr.Reader(["ru", "en"], gpu=False, verbose=False)
+    db = sqlite3.connect(dbp); known = known_tags(db); KNOWN.update(known)
+    cl = ocr_clusters(cl, fr, reader)
+    for c in cl:
+        c["ring"] = Counter(c["rings"]).most_common(1)[0][0] if c["rings"] else None
+        c["tag"], c["votes"], c["tot"] = canon(c["tags"], known)
+        c["rgbm"] = np.median(np.array(c["rgb"]), axis=0).astype(int).tolist() if c["rgb"] else None
+    noring = [c for c in cl if c["ring"] is None]
+    log("без кольца (имя не распознано):", [(c["txt"], [int(v) for v in c["g"]]) for c in noring])
+    items = [c for c in cl if c["ring"]]
+    if a.center: cen = np.array([float(v) for v in a.center.split(",")]); _, err = assign(items, T, cen)
+    else: cen, err = find_center(items, T)
+    log("центр карты", [round(float(v), 1) for v in cen], "ср. угл. ошибка, град", round(math.degrees(err), 2))
+    asg, _ = assign(items, T, cen)
+    owners = {}
+    for c in items:
+        if c["ring"] == 7:
+            owners["R7-01"] = c
+    for cid, c in asg.items(): owners[cid] = c
+    rows = []; weak = []
+    for t in T:
+        c = owners.get(t["id"])
+        if c is None:
+            rows.append((t["id"], t["ring"], None, None, 0.0, 0, "missing")); weak.append((t["id"], "не найден")); continue
+        conf = round(c["votes"] / c["tot"], 2) if c["tot"] >= 2 else (0.5 if c["tot"] == 1 else 0.0)
+        rows.append((t["id"], t["ring"], c["tag"], c["rgbm"], conf, c["votes"], "ocr"))
+        if c["tag"] is None or conf < 0.8 or c["votes"] < 2: weak.append((t["id"], f"tag={c['tag']} conf={conf} votes={c['votes']}"))
+    now = datetime.datetime.now().isoformat(timespec="seconds")
+    prev = db.execute("SELECT max(id) FROM scans WHERE state=? AND layer='A'", (a.state,)).fetchone()[0]
+    prevmap = {r[0]: r[1] for r in db.execute("SELECT cell_id,tag FROM cell_owners WHERE scan_id=?", (prev,))} if prev else {}
+    log("=== РЕЗУЛЬТАТ ===")
+    for r in rows: log(r[0], r[2], r[3], r[4], r[5], r[6], "" if prevmap.get(r[0]) == r[2] else f"  <-- было {prevmap.get(r[0])}")
+    changes = [(r[0], prevmap.get(r[0]), r[2]) for r in rows if prev and prevmap.get(r[0]) != r[2]]
+    log("изменений относительно скана", prev, ":", len(changes), changes)
+    log("слабые плитки:", weak)
+    stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    rec = []
+    # перепроверка: позиция плитки -> клик миникарты
+    good = [(t, owners[t["id"]]) for t in T if t["id"] in owners]
+    if len(good) >= 6:
+        P = np.array([g[0]["centroid"] for g in good]); Q = np.array([g[1]["g"] for g in good])
+        A = np.c_[P, np.ones(len(P))]; M = np.linalg.lstsq(A, Q, rcond=None)[0]  # центроид(ground)->global (аффинно)
+        off = np.mean([f["V"] - KMM * np.array([f["dx"], f["dy"]]) for f in fr], axis=0)
+        for cid, why in weak:
+            t = [x for x in T if x["id"] == cid][0]; g = np.array(list(t["centroid"]) + [1]) @ M
+            v = g - np.array([887, 490]); dxy = (v - off) / KMM
+            rec.append({"cell": cid, "dx": int(round(dxy[0])), "dy": int(round(dxy[1])), "why": why})
+    json.dump(rec, open(os.path.join(dd, f"recheck_{stamp}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    log("recheck точки:", rec)
+    own = {r[0]: {"tag": r[2], "rgb": r[3]} for r in rows}
+    import render_template
+    png = os.path.join(dd, f"layer_a_{a.state}_{stamp}.png"); render_template.render(own, png, title=f"Штат {a.state} · слой А", subtitle=now.replace("T", "  ")); log("картинка", png)
+    if a.dry: log("--dry: БД не трогаю"); return
+    cur = db.execute("INSERT INTO scans(state,layer,map_type,scanned_at,note) VALUES(?,?,?,?,?)", (a.state, "A", "1", now, a.note or f"layer_a_process, кадров {len(fr)}"))
+    sid = cur.lastrowid
+    for r in rows:
+        rgb = r[3] or [None, None, None]
+        db.execute("INSERT INTO cell_owners VALUES(?,?,?,?,?,?,?,?,?,?)", (sid, r[0], r[1], r[2], rgb[0], rgb[1], rgb[2], r[4], r[5], r[6]))
+    db.commit(); log("записан скан", sid)
+
+
+if __name__ == "__main__":
+    main()

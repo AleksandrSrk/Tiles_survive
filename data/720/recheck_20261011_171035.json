@@ -1,0 +1,164 @@
+[
+ {
+  "cell": "R7-01",
+  "dx": 71,
+  "dy": 1,
+  "why": "не найден"
+ },
+ {
+  "cell": "R6-01",
+  "dx": 83,
+  "dy": 0,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R5-01",
+  "dx": 71,
+  "dy": -15,
+  "why": "tag=SUN conf=0.5 votes=1"
+ },
+ {
+  "cell": "R5-02",
+  "dx": 91,
+  "dy": -3,
+  "why": "tag=Hob conf=0.67 votes=2"
+ },
+ {
+  "cell": "R5-05",
+  "dx": 50,
+  "dy": -3,
+  "why": "tag=FNX conf=0.5 votes=1"
+ },
+ {
+  "cell": "R4-01",
+  "dx": 83,
+  "dy": -16,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R4-02",
+  "dx": 102,
+  "dy": -3,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R4-03",
+  "dx": 95,
+  "dy": 9,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R4-05",
+  "dx": 59,
+  "dy": 19,
+  "why": "tag=HoD conf=0.67 votes=2"
+ },
+ {
+  "cell": "R4-07",
+  "dx": 45,
+  "dy": -7,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R3-02",
+  "dx": 96,
+  "dy": -13,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R3-03",
+  "dx": 111,
+  "dy": 1,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R3-05",
+  "dx": 77,
+  "dy": 29,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R2-03",
+  "dx": 115,
+  "dy": -7,
+  "why": "tag=ZOV conf=0.5 votes=1"
+ },
+ {
+  "cell": "R2-04",
+  "dx": 120,
+  "dy": 5,
+  "why": "tag=EKT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R2-05",
+  "dx": 104,
+  "dy": 16,
+  "why": "tag=UL conf=0.67 votes=2"
+ },
+ {
+  "cell": "R2-06",
+  "dx": 89,
+  "dy": 27,
+  "why": "tag=UL conf=0.33 votes=1"
+ },
+ {
+  "cell": "R2-07",
+  "dx": 74,
+  "dy": 37,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R2-08",
+  "dx": 58,
+  "dy": 32,
+  "why": "tag=DEU conf=0.5 votes=1"
+ },
+ {
+  "cell": "R1-03",
+  "dx": 108,
+  "dy": -19,
+  "why": "tag=None conf=0.0 votes=0"
+ },
+ {
+  "cell": "R1-04",
+  "dx": 122,
+  "dy": -9,
+  "why": "tag=ZOИ conf=0.5 votes=1"
+ },
+ {
+  "cell": "R1-06",
+  "dx": 117,
+  "dy": 15,
+  "why": "tag=ULT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-07",
+  "dx": 101,
+  "dy": 26,
+  "why": "tag=ULi conf=0.33 votes=1"
+ },
+ {
+  "cell": "R1-09",
+  "dx": 62,
+  "dy": 42,
+  "why": "tag=ULT conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-11",
+  "dx": 35,
+  "dy": 23,
+  "why": "tag=Zat conf=0.5 votes=1"
+ },
+ {
+  "cell": "R1-15",
+  "dx": 43,
+  "dy": -26,
+  "why": "tag=BEZ conf=0.67 votes=2"
+ },
+ {
+  "cell": "R1-16",
+  "dx": 59,
+  "dy": -37,
+  "why": "tag=REZ conf=0.5 votes=1"
+ }
+]
