@@ -31,3 +31,6 @@ assets/reference/*.png
 assets/reference/old_v1/_failed/
 data/720/tmp_*
 src/offline/tmp_*
+
+data/720/houses.sqlite
+data/720/zoom_an.txt
